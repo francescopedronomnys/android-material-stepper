@@ -91,6 +91,8 @@ limitations under the License.
             <enum name="tabs" value="0x03" />
         </attr>
 
+        <attr name="ms_verificationEnforcedEnabled" format="boolean" />
+
     </declare-styleable>
 
     <declare-styleable name="DottedProgressBar">

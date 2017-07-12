@@ -246,6 +246,8 @@ public class StepperLayout extends LinearLayout implements TabsContainer.TabItem
 
     private boolean mInProgress;
 
+    private boolean mVerificationEnforcedEnabled;
+
     @StyleRes
     private int mStepperLayoutTheme;
 
@@ -345,7 +347,6 @@ public class StepperLayout extends LinearLayout implements TabsContainer.TabItem
      * If you're supporting RTL make sure your {@link android.support.v4.view.ViewPager.PageTransformer} accounts for it.
      *
      * @param pageTransformer new page transformer
-     *
      * @see com.stepstone.stepper.internal.widget.StepViewPager
      * @see com.stepstone.stepper.internal.widget.pagetransformer.StepPageTransformerFactory
      */
@@ -798,6 +799,7 @@ public class StepperLayout extends LinearLayout implements TabsContainer.TabItem
 
             mStepperLayoutTheme = a.getResourceId(R.styleable.StepperLayout_ms_stepperLayoutTheme, R.style.MSDefaultStepperLayoutTheme);
 
+            mVerificationEnforcedEnabled = a.getBoolean(R.styleable.StepperLayout_ms_verificationEnforcedEnabled, true);
             a.recycle();
         }
     }
@@ -829,7 +831,7 @@ public class StepperLayout extends LinearLayout implements TabsContainer.TabItem
     private void onNext() {
         Step step = findCurrentStep();
 
-        if (verifyCurrentStep(step)) {
+        if (verifyCurrentStep(step) && mVerificationEnforcedEnabled) {
             invalidateCurrentPosition();
             return;
         }
