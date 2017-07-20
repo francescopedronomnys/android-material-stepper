@@ -58,15 +58,17 @@ public abstract class AbstractStepperType {
 
     /**
      * Called when a step gets selected as the new current step.
-     * @param newStepPosition new current step position
+     *
+     * @param newStepPosition     new current step position
      * @param userTriggeredChange <code>true</code> if current step position changed as a direct result of user interaction
      */
     public abstract void onStepSelected(int newStepPosition, boolean userTriggeredChange);
 
     /**
      * Called to set whether the stepPosition has an error or not, changing it's appearance.
+     *
      * @param stepPosition the step to set the error
-     * @param hasError whether it has error or not
+     * @param hasError     whether it has error or not
      */
     public void setErrorFlag(int stepPosition, boolean hasError) {
         mStepErrors.put(stepPosition, hasError);
@@ -82,8 +84,14 @@ public abstract class AbstractStepperType {
         return mStepErrors.get(stepPosition);
     }
 
+    public boolean hasErrorAtPosition(int stepPosition) {
+        return !(!getErrorAtPosition(stepPosition) &&
+                mStepErrors.get(stepPosition, true));
+    }
+
     /**
      * Called when {@link StepperLayout}'s adapter gets changed
+     *
      * @param stepAdapter new stepper adapter
      */
     @CallSuper

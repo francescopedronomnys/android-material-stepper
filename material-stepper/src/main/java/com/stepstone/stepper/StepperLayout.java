@@ -848,7 +848,15 @@ public class StepperLayout extends LinearLayout implements TabsContainer.TabItem
     }
 
     private void updateErrorFlagWhenGoingBack() {
-        updateErrorFlag(mShowErrorStateOnBackEnabled && mStepperType.getErrorAtPosition(mCurrentStepPosition));
+        boolean error = mStepperType.getErrorAtPosition(mCurrentStepPosition);
+        //If verification is not enforced we should understand if previous step is done, has error or is not validated at all
+        if (!mVerificationEnforcedEnabled) {
+            if (mStepperType.hasErrorAtPosition(mCurrentStepPosition)) {
+                updateErrorFlag(mShowErrorStateOnBackEnabled && error);
+            }
+        } else {
+            updateErrorFlag(mShowErrorStateOnBackEnabled && error);
+        }
     }
 
     @UiThread
