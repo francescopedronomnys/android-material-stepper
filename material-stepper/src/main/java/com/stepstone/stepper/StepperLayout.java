@@ -302,6 +302,7 @@ public class StepperLayout extends LinearLayout implements TabsContainer.TabItem
 
     /**
      * Getter for mStepAdapter
+     *
      * @return mStepAdapter
      */
     public StepAdapter getAdapter() {
@@ -374,10 +375,19 @@ public class StepperLayout extends LinearLayout implements TabsContainer.TabItem
     @UiThread
     public void onTabClicked(int position) {
         if (mTabNavigationEnabled) {
-            if (position > mCurrentStepPosition) {
-                onNext();
-            } else if (position < mCurrentStepPosition) {
-                setCurrentStepPosition(position);
+            if (mVerificationEnforcedEnabled) {
+                if (position > mCurrentStepPosition) {
+                    onNext();
+                } else if (position < mCurrentStepPosition) {
+                    setCurrentStepPosition(position);
+                }
+            } else {
+                if (position == mCurrentStepPosition + 1) {
+                    onNext();
+                } else {
+                    //update validation
+                    setCurrentStepPosition(position);
+                }
             }
         }
     }
@@ -413,6 +423,7 @@ public class StepperLayout extends LinearLayout implements TabsContainer.TabItem
     /**
      * Sets the current step to the one at the provided index.
      * This does not verify the current step.
+     *
      * @param currentStepPosition new current step position
      */
     public void setCurrentStepPosition(int currentStepPosition) {
@@ -438,6 +449,7 @@ public class StepperLayout extends LinearLayout implements TabsContainer.TabItem
      * Sets whether the Next button in the bottom navigation bar should be in the
      * 'verification failed' state i.e. still clickable but with an option to display it
      * differently to indicate to the user that he cannot go to the next step yet.
+     *
      * @param verificationFailed false if verification failed, true otherwise
      */
     public void setNextButtonVerificationFailed(boolean verificationFailed) {
@@ -448,6 +460,7 @@ public class StepperLayout extends LinearLayout implements TabsContainer.TabItem
      * Sets whether the Complete button in the bottom navigation bar should be in the
      * 'verification failed' state i.e. still clickable but with an option to display it
      * differently to indicate to the user that he cannot finish the process yet.
+     *
      * @param verificationFailed false if verification failed, true otherwise
      */
     public void setCompleteButtonVerificationFailed(boolean verificationFailed) {
@@ -457,6 +470,7 @@ public class StepperLayout extends LinearLayout implements TabsContainer.TabItem
     /**
      * Sets whether the Next button in the bottom navigation bar should be enabled (clickable).
      * setting this to <i>false</i> will make it unclickable.
+     *
      * @param enabled true if the button should be clickable, false otherwise
      */
     public void setNextButtonEnabled(boolean enabled) {
@@ -466,6 +480,7 @@ public class StepperLayout extends LinearLayout implements TabsContainer.TabItem
     /**
      * Sets whether the Complete button in the bottom navigation bar should be enabled (clickable).
      * setting this to <i>false</i> will make it unclickable.
+     *
      * @param enabled true if the button should be clickable, false otherwise
      */
     public void setCompleteButtonEnabled(boolean enabled) {
@@ -475,6 +490,7 @@ public class StepperLayout extends LinearLayout implements TabsContainer.TabItem
     /**
      * Sets whether the Back button in the bottom navigation bar should be enabled (clickable).
      * setting this to <i>false</i> will make it unclickable.
+     *
      * @param enabled true if the button should be clickable, false otherwise
      */
     public void setBackButtonEnabled(boolean enabled) {
@@ -484,6 +500,7 @@ public class StepperLayout extends LinearLayout implements TabsContainer.TabItem
     /**
      * Set whether the bottom navigation bar (with Back/Next/Complete buttons) should be visible.
      * <i>true</i> by default.
+     *
      * @param showBottomNavigation true if bottom navigation should be visible, false otherwise
      */
     public void setShowBottomNavigation(boolean showBottomNavigation) {
@@ -553,6 +570,7 @@ public class StepperLayout extends LinearLayout implements TabsContainer.TabItem
 
     /**
      * Sets whether step navigation is possible by clicking on the tabs directly. Only applicable for 'tabs' type.
+     *
      * @param tabNavigationEnabled true if step navigation is possible by clicking on the tabs directly, false otherwise
      */
     public void setTabNavigationEnabled(boolean tabNavigationEnabled) {
@@ -563,6 +581,7 @@ public class StepperLayout extends LinearLayout implements TabsContainer.TabItem
      * Updates the error state in the UI.
      * It does nothing if showing error state is disabled.
      * This is used internally to show the error on tabs.
+     *
      * @param hasError true if error should be shown, false otherwise
      * @see #setShowErrorStateEnabled(boolean)
      */
@@ -591,6 +610,7 @@ public class StepperLayout extends LinearLayout implements TabsContainer.TabItem
 
     /**
      * Shows a progress indicator if not already shown. This does not have to be a progress bar and it depends on chosen stepper feedback types.
+     *
      * @param progressMessage optional progress message if supported by the selected types
      */
     public void showProgress(@NonNull String progressMessage) {
@@ -612,6 +632,7 @@ public class StepperLayout extends LinearLayout implements TabsContainer.TabItem
 
     /**
      * Checks if there's an ongoing operation i.e. if {@link #showProgress(String)} was called and not followed by {@link #hideProgress()} yet.
+     *
      * @return true if in progress, false otherwise
      */
     public boolean isInProgress() {
@@ -620,6 +641,7 @@ public class StepperLayout extends LinearLayout implements TabsContainer.TabItem
 
     /**
      * Sets the mask for the stepper feedback type.
+     *
      * @param feedbackTypeMask step feedback type mask, should contain one or more flags from {@link StepperFeedbackType}
      */
     public void setFeedbackType(int feedbackTypeMask) {
@@ -661,6 +683,8 @@ public class StepperLayout extends LinearLayout implements TabsContainer.TabItem
 
         mStepperType = StepperTypeFactory.createType(mTypeIdentifier, this);
         mStepperFeedbackType = StepperFeedbackTypeFactory.createType(mFeedbackTypeMask, this);
+
+        mTabsContainer.setVerificationEnforcedEnabled(mVerificationEnforcedEnabled);
     }
 
     private void initNavigation() {

@@ -90,6 +90,8 @@ public class TabsContainer extends FrameLayout {
 
     private boolean mShowErrorStateOnBack;
 
+    private boolean mVerificationEnforcedEnabled;
+
     public TabsContainer(Context context) {
         this(context, null);
     }
@@ -172,6 +174,11 @@ public class TabsContainer extends FrameLayout {
             final boolean current = i == currentStepPosition;
 
             boolean hasError = stepErrors.get(i);
+            //If verification is not enforced we should understand if previous step is done, has error or is not validated at all
+            if(!mVerificationEnforcedEnabled) {
+                boolean validationNotDone = !hasError && stepErrors.get(i, true);
+                done = !validationNotDone;
+            }
             childTab.updateState(hasError, done, current);
             if (current) {
                 mTabsScrollView.smoothScrollTo(childTab.getLeft() - mContainerLateralPadding, 0);
@@ -201,5 +208,9 @@ public class TabsContainer extends FrameLayout {
 
     private boolean isLastPosition(int position) {
         return position == mStepTitles.size() - 1;
+    }
+
+    public void setVerificationEnforcedEnabled(boolean verificationEnforcedEnabled) {
+        mVerificationEnforcedEnabled = verificationEnforcedEnabled;
     }
 }
